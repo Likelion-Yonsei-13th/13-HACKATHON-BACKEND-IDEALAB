@@ -207,3 +207,9 @@ marimo/_lsp/
 __marimo__/
 
 myvenv/
+
+# Mac OS
+.DS_Store
+._.DS_Store
+**/.DS_Store
+**/._.DS_Store
