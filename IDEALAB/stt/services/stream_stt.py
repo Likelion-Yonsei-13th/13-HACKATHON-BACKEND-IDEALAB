@@ -8,7 +8,7 @@ from requests import Session
 from dotenv import load_dotenv
 
 # Audio configuration constants
-SAMPLE_RATE = 8000
+SAMPLE_RATE = 16000
 CHUNK = 1024
 CHANNELS = 1
 FORMAT = pyaudio.paInt16
