@@ -13,13 +13,10 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 import os
 import pymysql
+from dotenv import load_dotenv
 
-# Load .env if present
-try:
-    from dotenv import load_dotenv
-    load_dotenv()
-except Exception:
-    pass
+BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BASE_DIR / ".env")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
