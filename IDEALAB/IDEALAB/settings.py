@@ -50,6 +50,8 @@ INSTALLED_APPS = [
     "meetings",
     'stt',
     'minutes',
+    "keywords",
+    # 'adapter',
 ]
 
 MIDDLEWARE = [

@@ -6,7 +6,8 @@ class Meeting(models.Model):
     market_area = models.CharField(max_length=200, blank=True, default="")
     scheduled_time = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
-
+    ended_at = models.DateTimeField(null=True, blank=True)
+    
     class Meta:
         ordering = ["-id"]
 

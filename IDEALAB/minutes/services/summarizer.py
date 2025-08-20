@@ -141,7 +141,7 @@ def _call_chat_json_object(system_text: str, user_text: str, model: str) -> Dict
     cc = client.chat.completions.create(
         model=model,
         response_format={"type": "json_object"},
-        temperature=0.1,
+        # temperature=0.1,
         messages=[
             {"role": "system", "content": (
                 f"{system_text}\n"
