@@ -48,9 +48,9 @@ INSTALLED_APPS = [
     "rest_framework",
     "channels",
     "meetings",
-    'stt',
-    'minutes',
-    "keywords",
+    # 'stt', stt마이그레이션이 meetings 의존으로 임시주석처리
+    # 'minutes',
+    # "keywords",
     # 'adapter',
 ]
 
@@ -135,6 +135,7 @@ CHANNEL_LAYERS = {
   },
 }
 
+"""
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
@@ -148,6 +149,13 @@ DATABASES = {
             "init_command": "SET sql_mode='STRICT_TRANS_TABLES', time_zone='+09:00'",
         },
         "CONN_MAX_AGE": int(os.getenv("DB_CONN_MAX_AGE", "60")),
+    }
+}
+"""
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
 }
 
