@@ -23,4 +23,5 @@ urlpatterns = [
     path("api/", include("minutes.urls")),
     path("api/", include("stt.urls")),
     path("api/", include("keywords.urls")),
+    path("api/", include("analytics.urls")),
 ]

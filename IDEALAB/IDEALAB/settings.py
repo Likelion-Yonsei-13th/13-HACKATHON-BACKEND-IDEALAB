@@ -18,6 +18,9 @@ from dotenv import load_dotenv
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env")
 
+SMSC_API_BASE = "http://apis.data.go.kr/B553077/api/open/sdsc2"
+SMSC_API_KEY = os.getenv("SEOUL_STORE_API_KEY")
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -35,6 +38,8 @@ DEBUG = True
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",") if os.getenv("CSRF_TRUSTED_ORIGINS") else []
 
+SEOUL_OPENAPI_KEY = os.getenv("SEOUL_OPENAPI_KEY")
+SEOUL_OPENAPI_BASE = os.getenv("SEOUL_OPENAPI_BASE")
 
 # Application definition
 
@@ -51,7 +56,7 @@ INSTALLED_APPS = [
     'stt',
     'minutes',
     "keywords",
-    # 'adapter',
+    "analytics",
 ]
 
 MIDDLEWARE = [
