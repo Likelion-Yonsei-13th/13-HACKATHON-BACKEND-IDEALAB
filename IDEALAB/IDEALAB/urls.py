@@ -24,5 +24,6 @@ urlpatterns = [
     path("api/", include("minutes.urls")), #minutes OPENAI_API_KEY 환경변수에러로 일단 주석처리..
     path("api/", include("stt.urls")),
     path("api/", include("keywords.urls")),
+    path("api/", include("analytics.urls")),
 ]
 
