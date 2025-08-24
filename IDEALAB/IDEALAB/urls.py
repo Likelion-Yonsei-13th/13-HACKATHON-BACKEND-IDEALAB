@@ -15,8 +15,13 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path("admin/", admin.site.urls),
+    path("api/", include("meetings.urls")),
+    # path("api/", include("minutes.urls")), #minutes OPENAI_API_KEY 환경변수에러로 일단 주석처리..
+    # path("api/", include("stt.urls")),
+    # path("api/", include("keywords.urls")),
 ]
+
