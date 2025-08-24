@@ -15,6 +15,20 @@ class BlockCreateSerializer(serializers.ModelSerializer):
         model = Block
         fields = ("id","meeting","parent_block","order_no","type","level","text","rich_payload")
 
+    def validate(self, attrs):
+        if attrs.get("type") == "table":
+            payload = attrs.get("rich_payload") or {}
+            if not isinstance(payload.get("cols"), list):
+                raise serializers.ValidationError({"rich_payload": "cols(list) is required"})
+            if not isinstance(payload.get("rows"), list):
+                raise serializers.ValidationError({"rich_payload": "rows(list) is required"})
+            # 선택 필드 기본값
+            payload.setdefault("header", True)
+            payload.setdefault("colWidths", [None]*len(payload["cols"]))
+            payload.setdefault("merges", [])
+            attrs["rich_payload"] = payload
+        return attrs
+    
 class BlockUpdateSerializer(serializers.ModelSerializer):
     version = serializers.IntegerField()
     class Meta:

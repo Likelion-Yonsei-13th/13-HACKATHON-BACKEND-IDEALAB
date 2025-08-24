@@ -48,10 +48,10 @@ INSTALLED_APPS = [
     "rest_framework",
     "channels",
     "meetings",
-    # 'stt', stt마이그레이션이 meetings 의존으로 임시주석처리
-    # 'minutes',
-    # "keywords",
-    # 'adapter',
+    "user",
+    'stt',
+    'minutes',
+    "keywords",
 ]
 
 MIDDLEWARE = [
@@ -135,28 +135,18 @@ CHANNEL_LAYERS = {
   },
 }
 
-"""
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": os.getenv("MYSQL_DB"),
-        "USER": os.getenv("MYSQL_USER"),
-        "PASSWORD": os.getenv("MYSQL_PASSWORD"),
-        "HOST": os.getenv("MYSQL_HOST"),
-        "PORT": os.getenv("MYSQL_PORT"),
-        "OPTIONS": {
-            "charset": "utf8mb4",
-            "init_command": "SET sql_mode='STRICT_TRANS_TABLES', time_zone='+09:00'",
-        },
-        "CONN_MAX_AGE": int(os.getenv("DB_CONN_MAX_AGE", "60")),
-    }
-}
-"""
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "NAME": os.getenv("DB_NAME", "idealab"),
+        "USER": os.getenv("DB_USER", "idealab"),
+        "PASSWORD": os.getenv("DB_PASSWORD", ""),
+        "HOST": os.getenv("DB_HOST", "127.0.0.1"),
+        "PORT": os.getenv("DB_PORT", "3306"),
+        "OPTIONS": {"charset": "utf8mb4"},
     }
 }
 
 pymysql.install_as_MySQLdb()
+
+AUTH_USER_MODEL = 'user.User'
