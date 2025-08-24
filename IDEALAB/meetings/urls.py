@@ -1,7 +1,10 @@
-from django.urls import path
-from .views import MeetingListCreateView, MeetingDetailView
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import MeetingViewSet, BlockViewSet, AttachmentViewSet
 
-urlpatterns = [
-    path("meetings/", MeetingListCreateView.as_view(), name="meetings-list-create"),
-    path("meetings/<int:meeting_id>/", MeetingDetailView.as_view(), name="meetings-detail"),
-]
+router = DefaultRouter()
+router.register(r"meetings", MeetingViewSet, basename="meetings")
+router.register(r"blocks", BlockViewSet, basename="blocks")
+router.register(r"attachments", AttachmentViewSet, basename="attachments")
+
+urlpatterns = [ path("", include(router.urls)), ]
