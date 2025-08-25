@@ -8,7 +8,7 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument("csv_path", type=str)
-        parser.add_argument("--yyq_col", type=str, default="STDR_YYQU_CD")   # 예: 2023Q4
+        parser.add_argument("--yyq_col", type=str, default="STDR_YYQU_CD")   # 예: 20241
         parser.add_argument("--trdar_col", type=str, default="TRDAR_CD")
         parser.add_argument("--svc_cd_col", type=str, default="SVC_INDUTY_CD")
         parser.add_argument("--svc_nm_col", type=str, default="SVC_INDUTY_CD_NM")

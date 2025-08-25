@@ -1,0 +1,41 @@
+# docker-compose 파일 형식 버전을 지정합니다.
+version: '3.8'
+
+# 여기에 우리가 실행할 서비스(컨테이너)들을 정의합니다.
+services:
+  # 첫 번째 서비스의 이름은 "web" (우리의 Django/Gunicorn 앱)
+  web:
+    # 빌드: 현재 폴더(.)에 있는 Dockerfile을 사용해서 이미지를 빌드합니다.
+    build: .
+    env_file:
+      - IDEALAB/.env
+    # 볼륨 마운트 (저장 공간 연결)
+    volumes:
+      # static_volume이라는 공유 저장 공간을 컨테이너의 /app/static 폴더에 연결합니다.
+      - static_volume:/app/static
+      # 현재 폴더를 컨테이너의 /app 폴더에 연결해서, 코드 수정 시 바로 반영되도록 합니다.
+      - .:/app
+    # 포트: 컨테이너의 8000번 포트를 다른 서비스들이 접근할 수 있도록 노출합니다.
+    expose:
+      - "8000"
+
+  # 두 번째 서비스의 이름은 "nginx"
+  nginx:
+    # 빌드: ./nginx 폴더에 있는 Dockerfile을 사용해서 이미지를 빌드합니다.
+    build: IDEALAB/nginx
+    # 볼륨 마운트
+    volumes:
+      # web 서비스와 동일한 static_volume을 컨테이너의 /app/static 폴더에 연결합니다.
+      # 이렇게 해서 Django가 모은 정적 파일을 Nginx가 읽을 수 있게 됩니다.
+      - static_volume:/app/static
+    # 포트: 내 컴퓨터의 80번 포트를 Nginx 컨테이너의 80번 포트와 연결합니다.
+    # 우리가 브라우저에서 접속할 통로입니다.
+    ports:
+      - "80:80"
+    # 의존성: web 서비스가 시작된 후에 nginx 서비스를 시작합니다.
+    depends_on:
+      - web
+
+# 위에서 사용한 공유 저장 공간(볼륨)을 정의합니다.
+volumes:
+  static_volume:
