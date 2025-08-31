@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.pyc
+
+# 가상 환경
+/myvenv/
+
+# Django
+*.log
+db.sqlite3
+/static/
+/media/
+
+# 운영체제
+.DS_Store
+Thumbs.db
+
+# 에디터/IDE
+.vscode/
+.idea/
+
+# 민감한 정보 (보통 .env 파일에 보관)
+.env
