@@ -201,6 +201,8 @@ if __name__ == "__main__":
             sample_rate=SAMPLE_RATE,
             encoding=pb.DecoderConfig.AudioEncoding.LINEAR16,
             language="ko",
+            use_itn=True,
+            use_disfluency_filter=True,
             use_punctuation=True,
             stream_config=pb.RuntimeStreamConfig(
                 max_utter_duration=30,

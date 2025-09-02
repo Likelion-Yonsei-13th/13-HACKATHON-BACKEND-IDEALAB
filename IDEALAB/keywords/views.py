@@ -1,3 +1,4 @@
+# keywords/views.py
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -5,8 +6,9 @@ from django.shortcuts import get_object_or_404
 
 from meetings.models import Meeting
 from .models import KeywordLog
-from .serializers import KeywordExtractRequestSerializer, KeywordLogResponseSerializer
+from .serializers import KeywordExtractRequestSerializer  # KeywordLogResponseSerializer는 미사용
 from .services.rules import extract_keywords_llm, save_keywords_log
+from .services.linker import build_api_suggestions
 
 # (선택) 실시간 방송
 from asgiref.sync import async_to_sync
@@ -17,6 +19,11 @@ class ExtractKeywordsView(APIView):
     """
     POST /api/meetings/<int:meeting_id>/keywords/extract
     body: { text: str, source: "realtime"|"final" }
+
+    - LLM으로 키워드 추출
+    - 화이트리스트 규칙 기반 api_hints 생성 (rules.py)
+    - api_suggestions(analytics API 호출 후보) 구성
+    - 로그 저장 및 WebSocket 브로드캐스트
     """
     def post(self, request, meeting_id: int):
         meeting = get_object_or_404(Meeting, pk=meeting_id)
@@ -26,10 +33,19 @@ class ExtractKeywordsView(APIView):
         text = ser.validated_data["text"]
         source = ser.validated_data.get("source", "realtime")
 
+        # 1) 키워드 추출 (rules.py)
         keywords = extract_keywords_llm(text)
+
+        # 2) analytics API 제안 생성 (프론트에서 바로 호출 가능)
+        api_suggestions = build_api_suggestions(
+            entities=keywords.get("entities", []),
+            api_hints=keywords.get("api_hints", []),
+        )
+
+        # 3) 로그 저장
         log = save_keywords_log(meeting, source, text, keywords)
 
-        # WebSocket으로도 푸시
+        # 4) (선택) WebSocket 알림
         try:
             layer = get_channel_layer()
             if layer:
@@ -40,11 +56,13 @@ class ExtractKeywordsView(APIView):
                         "payload": {
                             "source": source,
                             "keywords": keywords,
+                            "api_suggestions": api_suggestions,
                             "log_id": log.id,
                         },
                     },
                 )
         except Exception:
+            # 소켓 실패는 API 실패로 취급하지 않음
             pass
 
         return Response(
@@ -52,6 +70,7 @@ class ExtractKeywordsView(APIView):
                 "ok": True,
                 "log_id": log.id,
                 "keywords": keywords,
+                "api_suggestions": api_suggestions,
             },
             status=status.HTTP_201_CREATED,
         )
@@ -76,3 +95,4 @@ class ListKeywordLogsView(APIView):
             for l in logs
         ]
         return Response(data, status=200)
+    

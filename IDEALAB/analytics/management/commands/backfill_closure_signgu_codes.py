@@ -1,11 +1,7 @@
 # analytics/management/commands/backfill_closure_signgu_codes.py
 from django.core.management.base import BaseCommand
 from analytics.models import ClosureStat
-try:
-    from analytics.services.region import name_to_signgu_cd
-except Exception:
-    def name_to_signgu_cd(x): return None  # 안전장치
-
+from analytics.services.region import normalize_signgu_name_to_code as name_to_signgu_cd
 class Command(BaseCommand):
     help = "ClosureStat의 signgu_cd가 비어있는 행을 자치구 이름(signgu_cd_nm)으로 보정합니다."
 

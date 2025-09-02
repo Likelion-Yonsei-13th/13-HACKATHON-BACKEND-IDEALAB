@@ -3,7 +3,7 @@ from django.core.management.base import BaseCommand
 from analytics.models import ClosureStat
 from analytics.services.csv_loader import read_csv_rows
 try:
-    from analytics.services.region import name_to_signgu_cd
+    from analytics.services.region import normalize_signgu_name_to_code as name_to_signgu_cd
 except Exception:
     def name_to_signgu_cd(x): return None
 

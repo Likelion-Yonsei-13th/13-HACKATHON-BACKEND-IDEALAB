@@ -59,3 +59,4 @@ zope.interface==7.2
 pymysql
 gunicorn
 django-cors-headers==4.4.0
+drf-nested-routers==0.94.2
