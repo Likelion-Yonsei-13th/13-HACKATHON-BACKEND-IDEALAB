@@ -28,10 +28,13 @@ services:
       # web 서비스와 동일한 static_volume을 컨테이너의 /app/static 폴더에 연결합니다.
       # 이렇게 해서 Django가 모은 정적 파일을 Nginx가 읽을 수 있게 됩니다.
       - static_volume:/app/static
+      # ✅ 인증서 읽게 마운트 (호스트의 /etc/letsencrypt 사용)
+      - /etc/letsencrypt:/etc/letsencrypt:ro
     # 포트: 내 컴퓨터의 80번 포트를 Nginx 컨테이너의 80번 포트와 연결합니다.
     # 우리가 브라우저에서 접속할 통로입니다.
     ports:
       - "80:80"
+      - "443:443"
     # 의존성: web 서비스가 시작된 후에 nginx 서비스를 시작합니다.
     depends_on:
       - web

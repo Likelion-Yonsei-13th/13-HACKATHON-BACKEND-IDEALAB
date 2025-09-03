@@ -77,6 +77,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://65.0.101.130",
     "http://43.204.22.115",
+    "http://idealab.ai.kr",
+    "https://idealab.ai.kr",
     "https://idealab-yonsei.netlify.app",
     "https://gleeful-duckanoo-65d4c8.netlify.app",
 ]
@@ -170,3 +172,8 @@ DATABASES = {
 pymysql.install_as_MySQLdb()
 
 AUTH_USER_MODEL = 'user.User'
+
+#https setting
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
