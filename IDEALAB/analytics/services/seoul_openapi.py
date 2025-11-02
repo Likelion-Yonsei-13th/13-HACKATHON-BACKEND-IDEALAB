@@ -37,43 +37,46 @@ def iter_TbgisTrdarRelm(page_size: int = 1000) -> Iterator[Dict[str, Any]]:
         for r in rows:
             yield r
 
-def iter_industry_metrics(trdar=None, year=None):
+def iter_industry_metrics(trdar: str, year: str | None = None, page_size: int = 1000):
     """
-    서울열린데이터 '유망업종/평균매출/성장률/상권변화지표' API 호출 → dict 반복자
-    (API 실제 스펙에 맞춰 SERVICE 이름, 필드명 수정 필요)
+    서울 상권분석 '업종/매출' 계열을 상권(trdar) 단위로 순회하는 제너레이터.
+    - 응답 스키마가 API 버전에 따라 조금씩 달라 널가드 + 키 다중 대응.
+    - year(yyq) 필터가 오면 가급적 반영.
     """
-    base_url = "http://openapi.seoul.go.kr:8088"
-    service = "VwsmTrdarSelngQq"  # 실제 서비스명으로 교체 필요
-    start, end = 1, 1000
+    # 내부에 이미 구현되어 있는 요청/페이지네이션 유틸을 그대로 사용하세요.
+    # 여기서는 레코드(r) 파싱만 강건하게 바꿉니다.
 
-    while True:
-        url = f"{base_url}/{SEOUL_API_KEY}/json/{service}/{start}/{end}"
-        params = {}
-        if trdar:
-            params["TRDAR_CD"] = trdar
-        if year:
-            params["STDR_YY"] = year
+    def _pick(d, *keys):
+        for k in keys:
+            v = d.get(k)
+            if v not in (None, "", "NULL", "NaN"):
+                return v
+        return None
 
-        resp = requests.get(url, params=params, timeout=20)
-        resp.raise_for_status()
-        data = resp.json().get(service, {})
-        rows = data.get("row", [])
-        if not rows:
-            break
+    # 예시: 기존 코드처럼 페이지네이션 루프가 있다 가정
+    for r in fetch_service_rows("INDUSTRY_METRICS", trdar=trdar, year=year, page_size=page_size):
+        # 연/분기
+        yy  = _pick(r, "STDR_YY", "STDR_YR", "BASE_YEAR")
+        qu  = _pick(r, "STDR_QU", "QU", "QUARTER")
+        yyq = _pick(r, "STDR_YYQU_CD") or (f"{yy}Q{qu}" if yy and qu else None)
 
-        for r in rows:
-            yield {
-                "trdar_cd": r.get("TRDAR_CD"),
-                "year": int(r.get("STDR_YY")),
-                "avg_sales": float(r.get("AVG_SALE", 0)),
-                "growth_rate": float(r.get("GROWTH_RATE", 0)),
-                "closure_rate": float(r.get("CLOSURE_RATE", 0)),
-                "change_index": float(r.get("CHANGE_IDX", 0)),
-            }
+        # 숫자 필드(있으면 사용)
+        thsmon_amt = _pick(r, "THSMON_SELNG_AMT", "THSMON_SELLNG_AMT")
+        thsmon_co  = _pick(r, "THSMON_SELNG_CO",  "THSMON_SELLNG_CO")
+        mdwk_amt   = _pick(r, "MDWK_SELNG_AMT",   "MDWK_SELLNG_AMT")
+        wkend_amt  = _pick(r, "WKEND_SELNG_AMT",  "WKEND_SELLNG_AMT")
 
-        start += 1000
-        end += 1000
-
+        yield {
+            "trdar_cd": _pick(r, "TRDAR_CD"),
+            "yyq": yyq,
+            "svc_induty_cd": _pick(r, "SVC_INDUTY_CD"),
+            "svc_induty_cd_nm": _pick(r, "SVC_INDUTY_CD_NM"),
+            "thsmon_selng_amt": thsmon_amt,
+            "thsmon_selng_co":  thsmon_co,
+            "mdwk_selng_amt":   mdwk_amt,
+            "wkend_selng_amt":  wkend_amt,
+        }
+        
 def _build_url(service: str, start: int, end: int, params: dict) -> str:
     """
     경로형식(권장): /{KEY}/json/{SERVICE}/{START}/{END}?q=...

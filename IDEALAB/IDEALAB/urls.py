@@ -19,11 +19,11 @@ from django.urls import path, include
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("api/analytics/", include("analytics.urls")),
     path("api/", include("meetings.urls")),
     path('api/user/', include('user.urls')),
-    path("api/", include("minutes.urls")), #minutes OPENAI_API_KEY 환경변수에러로 일단 주석처리..
+    path("api/", include("minutes.urls")),
     path("api/", include("stt.urls")),
     path("api/", include("keywords.urls")),
-    path("api/", include("analytics.urls")),
 ]
 
